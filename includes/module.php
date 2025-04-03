@@ -417,7 +417,7 @@ class AQM_Gallery_Module extends ET_Builder_Module {
         );
     }
     
-    function render($attrs, $content = null, $render_slug) {
+    function render($attrs, $render_slug, $content = null) {
         // Parse attributes
         $gallery_images = $this->props['gallery_images'];
         $pagination_type = isset($this->props['pagination_type']) ? $this->props['pagination_type'] : 'none';
@@ -727,23 +727,19 @@ class AQM_Gallery_Module extends ET_Builder_Module {
             $data_attributes_html .= sprintf(' data-%s="%s"', esc_attr($key), esc_attr($value));
         }
         
-        // Add data attributes based on gallery source
-        $data_attributes_html .= sprintf(' data-gallery-source="%s"', esc_attr($gallery_source));
+        // Add data attributes for gallery
+        $data_attributes_html .= sprintf(' data-gallery-source="manual"');
         
-        if ($gallery_source === 'manual') {
-            // For manual gallery, add the image IDs as a data attribute
-            $data_attributes_html .= sprintf(' data-gallery-images="%s"', esc_attr($gallery_images));
-        } else {
-            // For folder-based gallery, add all necessary attributes
-            $data_attributes_html .= sprintf(' data-folder-ids="%s"', esc_attr($folder_ids));
-            $data_attributes_html .= sprintf(' data-include-subfolders="%s"', esc_attr($include_subfolders));
-            $data_attributes_html .= sprintf(' data-sorting="%s"', esc_attr($sorting));
-            
-            // Add the full list of all image IDs for load more functionality
-            // This is important when we have many images but only show a few initially
-            $full_image_ids_string = implode(',', $image_ids);
-            $data_attributes_html .= sprintf(' data-gallery-images="%s"', esc_attr($full_image_ids_string));
-        }
+        // Add the image IDs as a data attribute
+        $data_attributes_html .= sprintf(' data-gallery-images="%s"', esc_attr($gallery_images));
+        
+        // Add sorting attribute
+        $data_attributes_html .= sprintf(' data-sorting="%s"', esc_attr($sorting));
+        
+        // Add the full list of all image IDs for load more functionality
+        // This is important when we have many images but only show a few initially
+        $full_image_ids_string = implode(',', $image_ids);
+        $data_attributes_html .= sprintf(' data-all-images="%s"', esc_attr($full_image_ids_string));
         
         // Create a unique gallery ID for lightbox navigation
         $unique_gallery_id = 'aqm-gallery-' . esc_attr($gallery_id) . '-' . uniqid();
