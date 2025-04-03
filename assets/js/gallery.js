@@ -10,13 +10,7 @@
         // Initialize all galleries
         $('.aqm-gallery-container').each(function() {
             initGallery($(this));
-        });
-        
-        // Initialize feature functions for all galleries
-        $('.aqm-gallery-container').each(function() {
-            const $gallery = $(this);
-            
-            console.log('Gallery initialized on document.ready');
+            console.log('Gallery initialized on document.ready:', $(this).attr('id'));
         });
     });
     
@@ -32,19 +26,7 @@
         }, 500);
     });
     
-    // Initialize feature functions for all galleries
-    function initFeatures($gallery) {
-        // Initialize buttons functionality
-        initSelectAll($gallery);
-        initDownloadSelected($gallery);
-        initDownloadAll($gallery);
-        
-        // Initialize item checkboxes events
-        initCheckboxes($gallery);
-        
-        // Initialize lightbox
-        initLightbox($gallery);
-    }
+    // This function was removed as we now initialize all features directly in initGallery
         
         // Force layout refresh on window load to ensure proper layout after all content is loaded
         $(window).on('load', function() {
@@ -111,17 +93,10 @@
         
         console.log('Gallery initialization - ID:', $gallery.attr('id'), 'Columns:', columns, 'Gap:', gap);
         
-        // Log gallery settings - using inline styles now directly on HTML elements instead of CSS variables
-        console.log('Gallery columns should be:', columns);
-        console.log('Gallery gap should be:', gap + 'px');
-        
         // Add grid layout class regardless of previous settings
         $gallery.addClass('aqm-gallery-grid');
         $gallery.removeClass('aqm-gallery-masonry');
         $gallery.removeClass('aqm-gallery-standard');
-        
-        // Initialize all features (buttons, lightbox, etc.)
-        initFeatures($gallery);
         
         // Get the gallery items container
         const $items = $gallery.find('.aqm-gallery-items');
@@ -134,16 +109,6 @@
             'height': 'auto' // Allow natural height based on content
         });
         
-        // Log initialization
-        console.log('Gallery initialized with grid layout, columns:', columns, 'gap:', gap);
-        
-        // For a clean layout, log the desired column count but don't override inline styles
-        console.log('Grid layout should use', columns, 'columns with', gap + 'px gap');
-        
-        // These styles are now added inline by PHP in the module.php file
-        // We don't want to override them in JavaScript since they might not apply
-        // in time for the layout
-        
         // Force images to maintain aspect ratio
         $items.find('img').css({
             'width': '100%',
@@ -151,8 +116,7 @@
             'display': 'block'
         });
         
-        // Initialize other gallery features - no need for layout type check anymore
-        // We're just doing grid now
+        // Initialize ONLY ONCE - we're removing the duplicate initializations
         
         // Initialize item selection functionality
         initCheckboxes($gallery);
@@ -160,7 +124,8 @@
         // Initialize load more button
         initLoadMore($gallery);
 
-        // Initialize Select All functionality
+        // Initialize Select All functionality - call this directly, not through initFeatures
+        console.log('Initializing Select All from initGallery for', $gallery.attr('id'));
         initSelectAll($gallery);
 
         // Initialize Download Selected functionality
@@ -749,25 +714,36 @@
      * Update the state of the Select All button based on checkbox status
      */
     function updateSelectAllButtonState($gallery, $selectAllBtn, $checkboxes, originalText, deselectText) {
+        if ($checkboxes.length === 0) return;
+        
         const checkedCount = $checkboxes.filter(':checked').length;
-        const allChecked = $checkboxes.length === checkedCount;
-        const noneChecked = checkedCount === 0;
+        console.log('Checked checkboxes:', checkedCount, 'out of', $checkboxes.length);
         
-        if (noneChecked) {
-            $selectAllBtn.html('<i class="fas fa-check-square" style="margin-right: 8px;"></i>' + originalText).removeClass('active');
-        } else if (allChecked) {
-            $selectAllBtn.html('<i class="fas fa-check-square" style="margin-right: 8px;"></i>' + deselectText).addClass('active');
+        if (checkedCount === 0) {
+            // None checked
+            $selectAllBtn.html('<i class="et-pb-icon">&#xe066;</i> ' + originalText).removeClass('active partial');
+            $gallery.find('.aqm-gallery-checkbox').css('opacity', '0.7');
+        } else if (checkedCount === $checkboxes.length) {
+            // All checked
+            $selectAllBtn.html('<i class="et-pb-icon">&#xe066;</i> ' + deselectText).addClass('active').removeClass('partial');
+            $gallery.find('.aqm-gallery-checkbox').css('opacity', '1');
         } else {
-            // Partial selection
-            $selectAllBtn.html('<i class="fas fa-check-square" style="margin-right: 8px;"></i>' + deselectText).addClass('partial');
+            // Some checked
+            $selectAllBtn.html('<i class="et-pb-icon">&#xe066;</i> ' + originalText).removeClass('active').addClass('partial');
+            $gallery.find('.aqm-gallery-checkbox').css('opacity', '0.85');
         }
-        
-        // Log status for debugging
-        console.log('Checkboxes:', $checkboxes.length, 'Checked:', checkedCount);
     }
     
-    /**
-     * Fall back to CSS grid layout if masonry fails
+
+
+/**
+ * Update the state of the Select All button based on checkbox status
+ */
+function updateSelectAllButtonState($gallery, $selectAllBtn, $checkboxes, originalText, deselectText) {
+    if ($checkboxes.length === 0) return;
+    
+    const checkedCount = $checkboxes.filter(':checked').length;
+    console.log('Checked checkboxes:', checkedCount, 'out of', $checkboxes.length);
      */
     function fallbackToCssGrid($gallery, $items) {
         const columns = parseInt($gallery.data('columns'), 10) || 3;

@@ -750,15 +750,15 @@ class AQM_Gallery_Module extends ET_Builder_Module {
             $output .= '<div class="aqm-gallery-controls">';
             
             if ($show_select_all == 'on') {
-                $output .= '<button class="aqm-select-all-button"><i class="fas fa-check-square" style="margin-right: 8px;"></i>' . esc_html($select_all_text) . '</button>';
+                $output .= '<button class="aqm-select-all-button"><i class="et-pb-icon" style="margin-right: 8px;">&#xe066;</i>' . esc_html($select_all_text) . '</button>';
             }
             
             if ($show_download_selected == 'on') {
-                $output .= '<button class="aqm-download-selected-button"><i class="fas fa-download" style="margin-right: 8px;"></i>' . esc_html($download_selected_text) . '</button>';
+                $output .= '<button class="aqm-download-selected-button"><i class="et-pb-icon" style="margin-right: 8px;">&#xe092;</i>' . esc_html($download_selected_text) . '</button>';
             }
             
             if ($show_download_all == 'on') {
-                $output .= '<button class="aqm-download-all-button" data-gallery-id="' . esc_attr($gallery_id) . '"><i class="fas fa-cloud-download-alt" style="margin-right: 8px;"></i>' . esc_html($download_all_text) . '</button>';
+                $output .= '<button class="aqm-download-all-button" data-gallery-id="' . esc_attr($gallery_id) . '"><i class="et-pb-icon" style="margin-right: 8px;">&#xe092;</i>' . esc_html($download_all_text) . '</button>';
             }
             
             $output .= '</div>';
