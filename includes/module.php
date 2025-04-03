@@ -749,7 +749,7 @@ class AQM_Gallery_Module extends ET_Builder_Module {
         if ($show_download == 'on' && ($show_select_all == 'on' || $show_download_selected == 'on' || $show_download_all == 'on')) {
             $output .= '<div class="aqm-gallery-controls">';
             
-            if ($show_select_all == 'on') {
+            if ($show_select_all == 'on' && $show_download_selected == 'on') {
                 $output .= '<button class="aqm-select-all-button"><i class="et-pb-icon" style="margin-right: 8px;">&#xe066;</i>' . esc_html($select_all_text) . '</button>';
             }
             

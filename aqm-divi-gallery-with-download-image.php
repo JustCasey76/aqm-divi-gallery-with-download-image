@@ -2,12 +2,21 @@
 /**
  * Plugin Name: AQM Divi Gallery with Download Image
  * Description: A custom Divi gallery module with load more, image download, Facebook sharing, and masonry grid layout.
- * Version: 1.1.2
+ * Version: 1.1.3
  * Author: AQ Marketing
  * Author URI: https://aqmarketing.com/
+ * Plugin URI: https://github.com/JustCasey76/aqm-divi-gallery-with-download-image
  */
 
 if (!defined('ABSPATH')) exit;
+
+// Include the GitHub Updater
+require_once plugin_dir_path(__FILE__) . 'includes/github-updater.php';
+
+// Initialize the updater
+if (class_exists('AQM_GitHub_Updater')) {
+    new AQM_GitHub_Updater(__FILE__);
+}
 
 // Include and register module
 function aqm_divi_gallery_init() {
