@@ -742,3 +742,77 @@ function aqm_divi_gallery_load_more() {
 // Register AJAX hooks for load more functionality
 add_action('wp_ajax_aqm_divi_gallery_load_more', 'aqm_divi_gallery_load_more');
 add_action('wp_ajax_nopriv_aqm_divi_gallery_load_more', 'aqm_divi_gallery_load_more');
+
+/**
+ * AJAX handler for downloading multiple images as a ZIP file
+ */
+function aqm_divi_gallery_download_images() {
+    // Verify nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'aqm_divi_gallery_nonce')) {
+        wp_die('Security check failed');
+    }
+    
+    // Get image IDs
+    if (!isset($_POST['image_ids']) || empty($_POST['image_ids'])) {
+        wp_die('No images selected');
+    }
+    
+    $image_ids = explode(',', sanitize_text_field($_POST['image_ids']));
+    
+    // Validate image IDs
+    $image_ids = array_map('intval', $image_ids);
+    $image_ids = array_filter($image_ids, function($id) {
+        return $id > 0 && wp_get_attachment_url($id);
+    });
+    
+    if (empty($image_ids)) {
+        wp_die('No valid images found');
+    }
+    
+    // Create temporary directory for ZIP
+    $upload_dir = wp_upload_dir();
+    $temp_dir = $upload_dir['basedir'] . '/aqm-gallery-temp';
+    
+    if (!file_exists($temp_dir)) {
+        mkdir($temp_dir, 0755, true);
+    }
+    
+    // Create a unique ZIP filename
+    $zip_filename = 'gallery-' . time() . '.zip';
+    $zip_filepath = $temp_dir . '/' . $zip_filename;
+    
+    // Initialize ZipArchive
+    $zip = new ZipArchive();
+    if ($zip->open($zip_filepath, ZipArchive::CREATE) !== TRUE) {
+        wp_die('Could not create ZIP file');
+    }
+    
+    // Add each image to the ZIP
+    foreach ($image_ids as $image_id) {
+        $image_path = get_attached_file($image_id);
+        if ($image_path && file_exists($image_path)) {
+            $filename = basename($image_path);
+            $zip->addFile($image_path, $filename);
+        }
+    }
+    
+    $zip->close();
+    
+    // Set headers and serve the ZIP file
+    header('Content-Type: application/zip');
+    header('Content-Disposition: attachment; filename="gallery-images.zip"');
+    header('Content-Length: ' . filesize($zip_filepath));
+    header('Pragma: no-cache');
+    header('Expires: 0');
+    
+    readfile($zip_filepath);
+    
+    // Clean up - delete the temporary ZIP file
+    @unlink($zip_filepath);
+    
+    exit;
+}
+
+// Register AJAX handlers for downloading images
+add_action('wp_ajax_aqm_divi_gallery_download_images', 'aqm_divi_gallery_download_images');
+add_action('wp_ajax_nopriv_aqm_divi_gallery_download_images', 'aqm_divi_gallery_download_images');

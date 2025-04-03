@@ -963,7 +963,7 @@
         
         // Create form and submit
         const $form = $('<form>', {
-            action: aqm_divi_gallery.ajax_url,
+            action: aqm_gallery_params.ajax_url,
             method: 'POST',
             target: '_blank'
         });
@@ -979,7 +979,7 @@
         $form.append($('<input>', {
             type: 'hidden',
             name: 'nonce',
-            value: aqm_divi_gallery.nonce
+            value: aqm_gallery_params.nonce
         }));
         
         // Add image IDs
