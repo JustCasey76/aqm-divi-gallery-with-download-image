@@ -132,6 +132,16 @@ function aqm_divi_gallery_enqueue_assets() {
                 'nonce' => wp_create_nonce('aqm_divi_gallery_nonce')
             )
         );
+        
+        // Also provide a second localization with the name the script is looking for
+        wp_localize_script(
+            'aqm-divi-gallery-script',
+            'aqm_divi_gallery',
+            array(
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('aqm_divi_gallery_nonce')
+            )
+        );
     }
     
     // Enqueue the simple lightbox script
@@ -747,17 +757,29 @@ add_action('wp_ajax_nopriv_aqm_divi_gallery_load_more', 'aqm_divi_gallery_load_m
  * AJAX handler for downloading multiple images as a ZIP file
  */
 function aqm_divi_gallery_download_images() {
+    // Check for request parameters in either POST or GET
+    $nonce = isset($_REQUEST['nonce']) ? $_REQUEST['nonce'] : '';
+    $image_ids_raw = isset($_REQUEST['image_ids']) ? $_REQUEST['image_ids'] : '';
+    
+    // Debug information
+    if (WP_DEBUG) {
+        error_log('AQM Gallery download request received');
+        error_log('Request method: ' . $_SERVER['REQUEST_METHOD']);
+        error_log('Nonce: ' . $nonce);
+        error_log('Image IDs: ' . $image_ids_raw);
+    }
+    
     // Verify nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'aqm_divi_gallery_nonce')) {
+    if (!wp_verify_nonce($nonce, 'aqm_divi_gallery_nonce')) {
         wp_die('Security check failed');
     }
     
     // Get image IDs
-    if (!isset($_POST['image_ids']) || empty($_POST['image_ids'])) {
+    if (empty($image_ids_raw)) {
         wp_die('No images selected');
     }
     
-    $image_ids = explode(',', sanitize_text_field($_POST['image_ids']));
+    $image_ids = explode(',', sanitize_text_field($image_ids_raw));
     
     // Validate image IDs
     $image_ids = array_map('intval', $image_ids);

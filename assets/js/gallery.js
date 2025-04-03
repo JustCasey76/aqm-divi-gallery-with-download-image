@@ -946,7 +946,12 @@
      * @param {Function} callback - Optional callback function to execute after download starts
      */
     function downloadImages(imageIds, callback) {
+        console.log('Download Images function called with IDs:', imageIds);
+        console.log('AJAX URL:', aqm_gallery_params ? aqm_gallery_params.ajax_url : 'undefined');
+        console.log('Nonce:', aqm_gallery_params ? aqm_gallery_params.nonce : 'undefined');
+        
         if (!imageIds || !imageIds.length) {
+            console.log('No image IDs provided');
             if (typeof callback === 'function') callback();
             return;
         }
@@ -956,45 +961,28 @@
             return id != null; // loose inequality check to catch null and undefined
         });
         
+        console.log('Filtered image IDs:', imageIds);
+        
         if (imageIds.length === 0) {
+            console.log('No valid image IDs after filtering');
             if (typeof callback === 'function') callback();
             return;
         }
+
+        // Get download URL with proper parameters
+        const downloadUrl = aqm_gallery_params.ajax_url + 
+            '?action=aqm_divi_gallery_download_images' + 
+            '&nonce=' + encodeURIComponent(aqm_gallery_params.nonce) + 
+            '&image_ids=' + encodeURIComponent(imageIds.join(','));
         
-        // Create form and submit
-        const $form = $('<form>', {
-            action: aqm_gallery_params.ajax_url,
-            method: 'POST',
-            target: '_blank'
-        });
+        console.log('Opening download URL:', downloadUrl);
         
-        // Add action
-        $form.append($('<input>', {
-            type: 'hidden',
-            name: 'action',
-            value: 'aqm_divi_gallery_download_images'
-        }));
-        
-        // Add nonce
-        $form.append($('<input>', {
-            type: 'hidden',
-            name: 'nonce',
-            value: aqm_gallery_params.nonce
-        }));
-        
-        // Add image IDs
-        $form.append($('<input>', {
-            type: 'hidden',
-            name: 'image_ids',
-            value: imageIds.join(',')
-        }));
-        
-        // Append to body and submit
-        $form.appendTo('body').submit().remove();
+        // Open in new tab for download
+        window.open(downloadUrl, '_blank');
         
         // Call the callback function if provided
         if (typeof callback === 'function') {
-            // Short delay to let the form submission complete
+            // Short delay
             setTimeout(callback, 500);
         }
     }
