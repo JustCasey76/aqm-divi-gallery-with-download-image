@@ -32,84 +32,6 @@ class AQM_Gallery_Module extends ET_Builder_Module {
     }
     
     /**
-     * Get folder options for dropdown
-     */
-    /**
-     * Get folder options from Folders Pro plugin
-     * 
-     * This method fetches available folders from Folders Pro and formats them for the select field
-     * It includes a hierarchical display of folders with proper indentation
-     * 
-     * @return array Array of folder options with ID => name pairs
-     */
-    function get_folder_options() {
-        $options = array();
-        
-        // Check if Folders Pro is active
-        if (!taxonomy_exists('folder')) {
-            $options['no_folders'] = esc_html__('Folders Pro not activated', 'aqm-divi-gallery');
-            return $options;
-        }
-        
-        // Get all folder terms without parent (top level)
-        $top_level_folders = get_terms(array(
-            'taxonomy' => 'folder',
-            'hide_empty' => false,
-            'parent' => 0,
-        ));
-        
-        if (is_wp_error($top_level_folders)) {
-            $options['error'] = esc_html__('Error loading folders', 'aqm-divi-gallery');
-            return $options;
-        }
-        
-        if (empty($top_level_folders)) {
-            $options['no_folders'] = esc_html__('No folders found', 'aqm-divi-gallery');
-            return $options;
-        }
-        
-        // Add all top level folders and their children recursively
-        foreach ($top_level_folders as $folder) {
-            $options[$folder->term_id] = $folder->name;
-            
-            // Add children folders with indentation
-            $this->add_child_folders_to_options($options, $folder->term_id, 1);
-        }
-        
-        return $options;
-    }
-    
-    /**
-     * Add child folders to options recursively with indentation
-     * 
-     * @param array &$options Reference to options array
-     * @param int $parent_id Parent folder ID
-     * @param int $level Current depth level (for indentation)
-     */
-    private function add_child_folders_to_options(&$options, $parent_id, $level) {
-        // Get child folders
-        $child_folders = get_terms(array(
-            'taxonomy' => 'folder',
-            'hide_empty' => false,
-            'parent' => $parent_id,
-        ));
-        
-        if (is_wp_error($child_folders) || empty($child_folders)) {
-            return;
-        }
-        
-        // Add indentation prefix based on level
-        $indent = str_repeat('— ', $level);
-        
-        foreach ($child_folders as $folder) {
-            $options[$folder->term_id] = $indent . $folder->name;
-            
-            // Recursively add children
-            $this->add_child_folders_to_options($options, $folder->term_id, $level + 1);
-        }
-    }
-    
-    /**
      * Get the current URL
      * 
      * Helper method to get the current URL for pagination links
@@ -123,31 +45,11 @@ class AQM_Gallery_Module extends ET_Builder_Module {
     }
     
     /**
-     * Get all child folder IDs for a parent folder
+     * Add dynamic inline CSS for all galleries
      * 
-     * This method recursively retrieves all child folder IDs of a parent folder
-     * 
-     * @param int $parent_id The parent folder ID
-     * @return array Array of child folder IDs
+     * @return string CSS rules for the gallery
      */
-    private function get_all_child_folders($parent_id) {
-        $child_ids = array();
-        
-        // Get immediate children
-        $child_terms = get_terms(array(
-            'taxonomy' => 'folder',
-            'hide_empty' => false,
-            'parent' => $parent_id,
-            'fields' => 'ids', // Only retrieve the term IDs
-        ));
-        
-        if (is_wp_error($child_terms) || empty($child_terms)) {
-            return $child_ids;
-        }
-        
-        // Add immediate children
-        $child_ids = $child_terms;
-        
+    private function get_gallery_css() {
         // Add dynamic inline CSS for all galleries
         $inline_css = "
             /* Gallery icon spacing */
@@ -172,58 +74,20 @@ class AQM_Gallery_Module extends ET_Builder_Module {
                 box-sizing: border-box !important;
                 transition: all 0.3s ease !important;
             }
-            
         ";
         
-        // Recursively add grandchildren
-        foreach ($child_terms as $child_id) {
-            $grandchildren = $this->get_all_child_folders($child_id);
-            if (!empty($grandchildren)) {
-                $child_ids = array_merge($child_ids, $grandchildren);
-            }
-        }
-        
-        return $child_ids;
+        return $inline_css;
     }
     
     function get_fields() {
         return array(
-            'gallery_source' => array(
-                'label' => esc_html__('Gallery Source', 'aqm-divi-gallery'),
-                'type' => 'select',
-                'option_category' => 'basic_option',
-                'options' => array(
-                    'manual' => esc_html__('Manual Selection', 'aqm-divi-gallery'),
-                    'folder' => esc_html__('Folders Pro', 'aqm-divi-gallery'),
-                ),
-                'default' => 'manual',
-                'toggle_slug' => 'main_content',
-                'description' => esc_html__('Choose how to select images for the gallery.', 'aqm-divi-gallery'),
-            ),
-            'folder_ids' => array(
-                'label' => esc_html__('Image Folders', 'aqm-divi-gallery'),
-                'type' => 'select_multiple',
+
+            'gallery_images' => array(
+                'label' => esc_html__('Gallery Images', 'aqm-divi-gallery'),
+                'type' => 'upload-gallery',
                 'option_category' => 'basic_option',
                 'toggle_slug' => 'main_content',
-                'options' => $this->get_folder_options(),
-                'description' => esc_html__('Select the Folders Pro folders containing the images you want to display. You can select multiple folders.', 'aqm-divi-gallery'),
-                'show_if' => array('gallery_source' => 'folder'),
-                'default' => '',
-                'computed_affects' => array('__gallery_images'),
-            ),
-            'include_subfolders' => array(
-                'label' => esc_html__('Include Subfolders', 'aqm-divi-gallery'),
-                'type' => 'yes_no_button',
-                'option_category' => 'configuration',
-                'options' => array(
-                    'on'  => esc_html__('Yes', 'aqm-divi-gallery'),
-                    'off' => esc_html__('No', 'aqm-divi-gallery'),
-                ),
-                'default' => 'off',
-                'toggle_slug' => 'main_content',
-                'description' => esc_html__('Include images from subfolders of selected folders.', 'aqm-divi-gallery'),
-                'show_if' => array('gallery_source' => 'folder'),
-                'computed_affects' => array('__gallery_images'),
+                'description' => esc_html__('Upload images to include in the gallery.', 'aqm-divi-gallery'),
             ),
             'sorting' => array(
                 'label' => esc_html__('Image Sorting', 'aqm-divi-gallery'),
@@ -239,7 +103,6 @@ class AQM_Gallery_Module extends ET_Builder_Module {
                 'default' => 'date_desc',
                 'toggle_slug' => 'main_content',
                 'description' => esc_html__('Choose how to sort the images in your gallery.', 'aqm-divi-gallery'),
-                'computed_affects' => array('__gallery_images'),
             ),
             'initial_count' => array(
                 'label' => esc_html__('Initial Images to Show', 'aqm-divi-gallery'),
@@ -295,14 +158,6 @@ class AQM_Gallery_Module extends ET_Builder_Module {
                 'description' => esc_html__('Set the number of images to display per page when using pagination.', 'aqm-divi-gallery'),
                 'show_if' => array('pagination_type' => 'numbered'),
             ),
-            'gallery_images' => array(
-                'label' => esc_html__('Gallery Images', 'aqm-divi-gallery'),
-                'type' => 'upload-gallery',
-                'option_category' => 'basic_option',
-                'toggle_slug' => 'main_content',
-                'description' => esc_html__('Upload images to include in the gallery.', 'aqm-divi-gallery'),
-                'show_if' => array('gallery_source' => 'manual'),
-            ),
             'layout_type' => array(
                 'label' => esc_html__('Layout Type', 'aqm-divi-gallery'),
                 'type' => 'select',
@@ -348,7 +203,7 @@ class AQM_Gallery_Module extends ET_Builder_Module {
                 'option_category' => 'basic_option',
                 'toggle_slug' => 'elements',
                 'options' => array(
-                    'off' => esc_html__('No', 'aqm-divi-gallery'),
+                    'off'  => esc_html__('No', 'aqm-divi-gallery'),
                     'on' => esc_html__('Yes', 'aqm-divi-gallery'),
                 ),
                 'default' => 'on',
@@ -564,8 +419,6 @@ class AQM_Gallery_Module extends ET_Builder_Module {
     
     function render($attrs, $content = null, $render_slug) {
         // Parse attributes
-        $gallery_source = $this->props['gallery_source'];
-        $folder_ids = isset($this->props['folder_ids']) ? $this->props['folder_ids'] : '';
         $gallery_images = $this->props['gallery_images'];
         $pagination_type = isset($this->props['pagination_type']) ? $this->props['pagination_type'] : 'none';
         $initial_count = $pagination_type === 'load_more' ? intval($this->props['initial_count']) : 0;
@@ -605,151 +458,50 @@ class AQM_Gallery_Module extends ET_Builder_Module {
         // Get image IDs
         $image_ids = array();
         
-        // Get sorting setting for all gallery types
+        // Get sorting setting for gallery
         $sorting = isset($this->props['sorting']) ? $this->props['sorting'] : 'date_desc';
         
-        if ($gallery_source === 'manual') {
-            // Get manually selected images
-            if (!empty($gallery_images)) {
-                $gallery_images_array = explode(',', $gallery_images);
-                foreach ($gallery_images_array as $image_id) {
-                    $image_ids[] = $image_id;
-                }
-                
-                // Sort manual gallery images if not using the default order
-                if ($sorting !== 'default' && !empty($image_ids)) {
-                    global $wpdb;
-                    $ids_str = implode(',', array_map('intval', $image_ids));
-                    
-                    // Prepare order by clause based on sorting setting
-                    $order_by = 'post_date DESC'; // default fallback
-                    
-                    switch ($sorting) {
-                        case 'date_asc':
-                            $order_by = 'post_date ASC';
-                            break;
-                        case 'title_asc':
-                            $order_by = 'post_title ASC';
-                            break;
-                        case 'title_desc':
-                            $order_by = 'post_title DESC';
-                            break;
-                        case 'random':
-                            $order_by = 'RAND()';
-                            break;
-                        case 'date_desc':
-                        default:
-                            $order_by = 'post_date DESC';
-                            break;
-                    }
-                    
-                    // Query to get sorted image IDs
-                    $query = "SELECT ID FROM {$wpdb->posts} WHERE ID IN ({$ids_str}) AND post_type = 'attachment' AND post_mime_type LIKE 'image/%' ORDER BY {$order_by}";
-                    $sorted_ids = $wpdb->get_col($query);
-                    
-                    // Only use sorted IDs if we got results back
-                    if (!empty($sorted_ids)) {
-                        $image_ids = $sorted_ids;
-                    }
-                }
-            }
-        } else {
-            // Get settings for folder-based gallery
-            $selected_folder_ids = array();
-            $include_subfolders = isset($this->props['include_subfolders']) ? $this->props['include_subfolders'] : 'off';
-            
-            // Make sure Folders Pro is active
-            if (!taxonomy_exists('folder')) {
-                return sprintf(
-                    '<div class="aqm-gallery-error">%s</div>',
-                    esc_html__('Folders Pro plugin is required for folder-based galleries.', 'aqm-divi-gallery')
-                );
+        // Get manually selected images
+        if (!empty($gallery_images)) {
+            $gallery_images_array = explode(',', $gallery_images);
+            foreach ($gallery_images_array as $image_id) {
+                $image_ids[] = $image_id;
             }
             
-            // Get selected folder IDs
-            if (!empty($folder_ids)) {
-                $selected_folder_ids = explode(',', $folder_ids);
-                $selected_folder_ids = array_map('intval', $selected_folder_ids);
-                
-                // Remove any invalid IDs (0 or negative)
-                $selected_folder_ids = array_filter($selected_folder_ids, function($id) {
-                    return $id > 0;
-                });
-            }
-            
-            if (empty($selected_folder_ids)) {
-                return sprintf(
-                    '<div class="aqm-gallery-error">%s</div>',
-                    esc_html__('Please select at least one folder for your gallery.', 'aqm-divi-gallery')
-                );
-            }
-            
-            // Build array of all folder IDs to fetch (including subfolders if needed)
-            $all_folder_ids = $selected_folder_ids;
-            
-            // Include subfolders if enabled
-            if ($include_subfolders === 'on') {
-                foreach ($selected_folder_ids as $parent_id) {
-                    $child_folders = $this->get_all_child_folders($parent_id);
-                    if (!empty($child_folders)) {
-                        $all_folder_ids = array_merge($all_folder_ids, $child_folders);
-                    }
-                }
-                
-                // Remove duplicates
-                $all_folder_ids = array_unique($all_folder_ids);
-            }
-            
-            // Get attachments from all selected folders
-            $all_image_ids = array();
-            foreach ($all_folder_ids as $folder_id) {
-                $folder_attachments = get_objects_in_term($folder_id, 'folder');
-                if (!is_wp_error($folder_attachments) && !empty($folder_attachments)) {
-                    $all_image_ids = array_merge($all_image_ids, $folder_attachments);
-                }
-            }
-            
-            // Remove duplicates (an image could be in multiple folders)
-            $all_image_ids = array_unique($all_image_ids);
-            
-            // Filter to include only image attachments and apply sorting
-            if (!empty($all_image_ids)) {
+            // Sort manual gallery images if not using the default order
+            if ($sorting !== 'default' && !empty($image_ids)) {
                 global $wpdb;
+                $ids_str = implode(',', array_map('intval', $image_ids));
                 
-                // Convert array to comma-separated string for SQL query
-                $ids_str = implode(',', array_map('intval', $all_image_ids));
+                // Prepare order by clause based on sorting setting
+                $order_by = 'post_date DESC'; // default fallback
                 
-                // Only proceed if we have IDs
-                if (!empty($ids_str)) {
-                    // Prepare order by clause based on sorting setting
-                    $order_by = 'post_date DESC'; // default
-                    
-                    switch ($sorting) {
-                        case 'date_asc':
-                            $order_by = 'post_date ASC';
-                            break;
-                        case 'title_asc':
-                            $order_by = 'post_title ASC';
-                            break;
-                        case 'title_desc':
-                            $order_by = 'post_title DESC';
-                            break;
-                        case 'random':
-                            $order_by = 'RAND()';
-                            break;
-                        default: // date_desc
-                            $order_by = 'post_date DESC';
-                    }
-                    
-                    // Query to get only image attachments with proper sorting
-                    $query = "SELECT ID FROM {$wpdb->posts} 
-                        WHERE ID IN ({$ids_str}) 
-                        AND post_type = 'attachment' 
-                        AND post_mime_type LIKE 'image/%' 
-                        ORDER BY {$order_by}";
-                    
-                    // Get all image IDs
-                    $image_ids = $wpdb->get_col($query);
+                switch ($sorting) {
+                    case 'date_asc':
+                        $order_by = 'post_date ASC';
+                        break;
+                    case 'title_asc':
+                        $order_by = 'post_title ASC';
+                        break;
+                    case 'title_desc':
+                        $order_by = 'post_title DESC';
+                        break;
+                    case 'random':
+                        $order_by = 'RAND()';
+                        break;
+                    case 'date_desc':
+                    default:
+                        $order_by = 'post_date DESC';
+                        break;
+                }
+                
+                // Query to get sorted image IDs
+                $query = "SELECT ID FROM {$wpdb->posts} WHERE ID IN ({$ids_str}) AND post_type = 'attachment' AND post_mime_type LIKE 'image/%' ORDER BY {$order_by}";
+                $sorted_ids = $wpdb->get_col($query);
+                
+                // Only use sorted IDs if we got results back
+                if (!empty($sorted_ids)) {
+                    $image_ids = $sorted_ids;
                 }
             }
         }

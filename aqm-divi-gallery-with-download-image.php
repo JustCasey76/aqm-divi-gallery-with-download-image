@@ -57,7 +57,7 @@ function aqm_divi_gallery_enqueue_assets() {
         wp_enqueue_style(
             'aqm-divi-gallery-force-mobile',
             plugins_url('/assets/css/force-mobile.css', __FILE__),
-            array('et-builder-modules-style', 'aqm-divi-gallery-style', 'aqm-divi-gallery-override-style', 'aqm-divi-gallery-mobile-style'),
+            array('aqm-divi-gallery-style', 'aqm-divi-gallery-override-style', 'aqm-divi-gallery-mobile-style'),
             '1.0.3'
         );
     }
@@ -96,7 +96,7 @@ function aqm_divi_gallery_enqueue_assets() {
         wp_enqueue_style(
             'aqm-divi-gallery-row-height-fix',
             plugins_url('/assets/css/row-height-fix.css', __FILE__),
-            array('et-builder-modules-style', 'aqm-divi-gallery-style', 'aqm-divi-gallery-override-style', 'aqm-divi-gallery-mobile-style', 'aqm-divi-gallery-force-mobile'),
+            array('aqm-divi-gallery-style', 'aqm-divi-gallery-override-style', 'aqm-divi-gallery-mobile-style', 'aqm-divi-gallery-force-mobile'),
             '1.0.0'
         );
     }
