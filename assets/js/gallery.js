@@ -669,17 +669,23 @@
      * Initialize Select All functionality
      */
     function initSelectAll($gallery) {
+        console.log('Initializing Select All for gallery', $gallery.attr('id'));
+        
         const $selectAllBtn = $gallery.find('.aqm-select-all-button');
         
         if ($selectAllBtn.length === 0) {
+            console.log('No Select All button found');
             return;
         }
         
-        const $checkboxes = $gallery.find('.aqm-gallery-item input[type="checkbox"]');
+        // Use the proper selector that matches our HTML structure
+        const $checkboxes = $gallery.find('.aqm-gallery-item-checkbox');
+        console.log('Found', $checkboxes.length, 'checkboxes');
         
         if ($checkboxes.length === 0) {
             // Hide button if no checkboxes
             $selectAllBtn.hide();
+            console.log('No checkboxes found, hiding Select All button');
             return;
         }
         
@@ -691,12 +697,16 @@
             originalText = 'Select All';
         }
         
+        // Log what we're setting up
+        console.log('Select All button text:', originalText, 'Deselect text:', deselectText);
+        
         $selectAllBtn.on('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
             
             // Check if all checkboxes are currently checked
             const allChecked = $checkboxes.length === $checkboxes.filter(':checked').length;
+            console.log('Select All clicked. All checked?', allChecked);
             
             // Toggle checkboxes
             $checkboxes.prop('checked', !allChecked);
@@ -704,14 +714,16 @@
             // Toggle button text and class
             if (allChecked) {
                 // If all are checked, we'll uncheck them all
-                $selectAllBtn.html('<i class="fas fa-check-square" style="margin-right: 8px;"></i>' + originalText).removeClass('active partial');
+                console.log('Unchecking all');
+                $selectAllBtn.html('<i class="et-pb-icon">&#xe066;</i> ' + originalText).removeClass('active partial');
                 $checkboxes.closest('.aqm-gallery-item').removeClass('selected');
                 
                 // Hide checkboxes
                 $gallery.find('.aqm-gallery-checkbox').css('opacity', '0.7');
             } else {
                 // If some or none are checked, we'll check them all
-                $selectAllBtn.html('<i class="fas fa-check-square" style="margin-right: 8px;"></i>' + deselectText).addClass('active').removeClass('partial');
+                console.log('Checking all');
+                $selectAllBtn.html('<i class="et-pb-icon">&#xe066;</i> ' + deselectText).addClass('active').removeClass('partial');
                 $checkboxes.closest('.aqm-gallery-item').addClass('selected');
                 
                 // Show checkboxes
@@ -729,6 +741,8 @@
         $checkboxes.on('change', function() {
             updateSelectAllButtonState($gallery, $selectAllBtn, $checkboxes, originalText, deselectText);
         });
+        
+        console.log('Select All button initialized successfully');
     }
     
     /**
@@ -868,22 +882,34 @@
      * Initialize Download Selected functionality
      */
     function initDownloadSelected($gallery) {
+        console.log('Initializing Download Selected for gallery', $gallery.attr('id'));
+        
         const $downloadSelectedBtn = $gallery.find('.aqm-download-selected-button');
         
         if ($downloadSelectedBtn.length === 0) {
+            console.log('No Download Selected button found');
             return;
         }
         
         $downloadSelectedBtn.on('click', function(e) {
             e.preventDefault();
+            console.log('Download Selected button clicked');
             
-            // Get selected image IDs
-            const $selectedItems = $gallery.find('.aqm-gallery-item input[type="checkbox"]:checked').closest('.aqm-gallery-item');
+            // Get selected image IDs using the proper class
+            const $selectedCheckboxes = $gallery.find('.aqm-gallery-item-checkbox:checked');
+            console.log('Found', $selectedCheckboxes.length, 'selected checkboxes');
+            
             const selectedImageIds = [];
             
-            $selectedItems.each(function() {
-                selectedImageIds.push($(this).data('id'));
+            $selectedCheckboxes.each(function() {
+                const imageId = $(this).data('id');
+                console.log('Adding image ID to download:', imageId);
+                if (imageId) {
+                    selectedImageIds.push(imageId);
+                }
             });
+            
+            console.log('Selected image IDs:', selectedImageIds);
             
             if (selectedImageIds.length === 0) {
                 alert('Please select at least one image to download.');
@@ -893,35 +919,46 @@
             // Start download
             downloadImages(selectedImageIds);
         });
+        
+        console.log('Download Selected button initialized successfully');
     }
 
     /**
      * Initialize Download All functionality
      */
     function initDownloadAll($gallery) {
+        console.log('Initializing Download All for gallery', $gallery.attr('id'));
+        
         const $downloadAllBtn = $gallery.find('.aqm-download-all-button');
         
         if ($downloadAllBtn.length === 0) {
+            console.log('No Download All button found');
             return;
         }
         
         $downloadAllBtn.on('click', function(e) {
             e.preventDefault();
+            console.log('Download All button clicked');
             
             // Add loading state to button
             const originalText = $downloadAllBtn.text();
             $downloadAllBtn.text('Preparing...').prop('disabled', true).css('opacity', 0.7);
             
-            // Get all image IDs
+            // Get all image IDs directly from the HTML data attributes
             const $allItems = $gallery.find('.aqm-gallery-item');
+            console.log('Found', $allItems.length, 'gallery items');
+            
             const allImageIds = [];
             
             $allItems.each(function() {
-                const imageId = $(this).data('id');
-                if (imageId) {
+                const imageId = parseInt($(this).attr('data-id'));
+                console.log('Found image with ID:', imageId);
+                if (imageId && !isNaN(imageId)) {
                     allImageIds.push(imageId);
                 }
             });
+            
+            console.log('All image IDs:', allImageIds);
             
             if (allImageIds.length === 0) {
                 alert('No images found in the gallery.');
@@ -935,6 +972,8 @@
                 $downloadAllBtn.text(originalText).prop('disabled', false).css('opacity', 1);
             });
         });
+        
+        console.log('Download All button initialized successfully');
     }
 
     // Legacy Magnific Popup implementation has been removed

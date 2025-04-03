@@ -904,7 +904,7 @@ class AQM_Gallery_Module extends ET_Builder_Module {
             
             // Checkbox for selection
             if ($show_download == 'on' && $show_download_selected == 'on') {
-                $output .= '<div class="aqm-gallery-checkbox"><input type="checkbox" id="checkbox-' . esc_attr($image_id) . '" /><label for="checkbox-' . esc_attr($image_id) . '"></label></div>';
+                $output .= '<div class="aqm-gallery-checkbox"><input type="checkbox" class="aqm-gallery-item-checkbox" id="checkbox-' . esc_attr($image_id) . '" data-id="' . esc_attr($image_id) . '" /><label for="checkbox-' . esc_attr($image_id) . '"></label></div>';
             }
             
             // Icons
