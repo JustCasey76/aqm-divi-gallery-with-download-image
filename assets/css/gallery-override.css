@@ -1,0 +1,103 @@
+/* Mobile-specific overrides for AQM Gallery */
+
+/* Force single column on mobile devices */
+@media (max-width: 767px) {
+    .aqm-gallery-container .aqm-gallery-items {
+        display: grid !important;
+        grid-template-columns: repeat(1, 1fr) !important;
+        grid-gap: 15px !important;
+    }
+    
+    /* Make the column width full on mobile */
+    .aqm-gallery-container .aqm-gallery-item {
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+    
+    /* Pagination styling for mobile */
+    .aqm-pagination {
+        width: 100% !important;
+        justify-content: center !important;
+        padding: 5px !important;
+        flex-wrap: wrap !important;
+    }
+    
+    .aqm-pagination a,
+    .aqm-pagination span {
+        min-width: 40px !important;
+        height: 40px !important;
+        margin: 4px !important;
+        font-size: 16px !important;
+    }
+    
+    /* Hide some pagination elements on very small screens */
+    @media (max-width: 400px) {
+        .aqm-pagination .aqm-ellipsis {
+            display: none !important;
+        }
+    }
+}
+
+/* Improved pagination styling */
+.aqm-pagination-wrap {
+    margin: 40px auto 30px !important;
+    text-align: center !important;
+    font-family: 'Open Sans', Helvetica, Arial, Lucida, sans-serif !important;
+    max-width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100% !important;
+}
+
+.aqm-pagination {
+    display: flex !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    margin-bottom: 15px !important;
+    border-radius: 4px !important;
+    padding: 10px !important;
+    background-color: #f5f5f5 !important;
+    width: auto !important;
+}
+
+.aqm-pagination a,
+.aqm-pagination span {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 40px !important;
+    height: 40px !important;
+    padding: 0 12px !important;
+    margin: 0 4px !important;
+    border-radius: 4px !important;
+    text-decoration: none !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease !important;
+    box-sizing: border-box !important;
+    line-height: 1 !important;
+}
+
+.aqm-pagination a {
+    background-color: #ffffff !important;
+    color: #333333 !important;
+    border: 1px solid #dddddd !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.aqm-pagination a:hover {
+    background-color: rgba(46, 163, 242, 0.1) !important;
+    color: #2ea3f2 !important;
+    border-color: #2ea3f2 !important;
+}
+
+.aqm-pagination .aqm-pagination-current {
+    background-color: #2ea3f2 !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    border: 1px solid #2ea3f2 !important;
+}

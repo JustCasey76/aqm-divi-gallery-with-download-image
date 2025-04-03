@@ -1,0 +1,47 @@
+/* 
+ * AQM Gallery Row Height Fix
+ * Ensures rows are only as tall as their content with no extra space
+ */
+
+/* Fix grid row heights to be only as tall as their content */
+.aqm-gallery-items {
+    grid-auto-rows: min-content !important;
+}
+
+/* Ensure images maintain aspect ratio and don't create extra space */
+.aqm-gallery-item img {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    object-fit: contain !important;
+    margin: 0 !important;
+}
+
+/* Remove any extra margins that could be causing spacing */
+.aqm-gallery-item {
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* Remove any bottom margins from item content */
+.aqm-gallery-item-inner {
+    margin-bottom: 0 !important;
+}
+
+/* Compact the title and description if present */
+.aqm-gallery-item-title,
+.aqm-gallery-item-caption {
+    margin-top: 5px !important;
+    margin-bottom: 5px !important;
+    line-height: 1.3 !important;
+}
+
+/* Fix for IE and older browsers */
+@supports not (display: grid) {
+    .aqm-gallery-item {
+        float: left !important;
+        margin-bottom: 20px !important;
+    }
+}

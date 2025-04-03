@@ -1,0 +1,1004 @@
+/* AQM Divi Gallery with Download Image Styles */
+
+/* Error messages */
+.aqm-gallery-error {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 15px 20px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    border: 1px solid #f5c6cb;
+    font-size: 16px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+/* Gallery Container */
+.aqm-gallery-container {
+    position: relative;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-bottom: 30px;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+}
+
+.aqm-gallery-container *,
+.aqm-gallery-container *:before,
+.aqm-gallery-container *:after {
+    box-sizing: inherit;
+}
+
+/* Gallery Header */
+.aqm-gallery-header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 25px;
+}
+
+/* Bulk Actions */
+.aqm-gallery-bulk-actions {
+    display: flex;
+    gap: 15px;
+}
+
+/* Common button style */
+.aqm-download-button {
+    display: inline-block;
+    background-color: #2ea3f2;
+    color: #fff !important;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 1;
+    box-shadow: none;
+    transition: all 0.3s ease;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: auto;
+    min-width: 150px;
+}
+
+.aqm-download-button:hover:not([disabled]) {
+    background-color: #0c71c3;
+    opacity: 1;
+}
+
+.aqm-download-button[disabled] {
+    background-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Ensure both buttons look identical */
+.aqm-bulk-download-button,
+.aqm-download-all-button {
+    /* Override any browser defaults */
+    margin: 0;
+    outline: none;
+    height: auto;
+}
+
+/* Control Buttons - Modern Style */
+.aqm-select-all-button,
+.aqm-download-selected-button,
+.aqm-download-all-button {
+    margin-right: 10px;
+    padding: 12px 24px;
+    background-color: #2ea3f2;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+    position: relative;
+    overflow: hidden;
+    outline: none;
+}
+
+.aqm-select-all-button::after,
+.aqm-download-selected-button::after,
+.aqm-download-all-button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.1);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.aqm-select-all-button:hover,
+.aqm-download-selected-button:hover,
+.aqm-download-all-button:hover {
+    background-color: #0d8ae6;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+
+.aqm-select-all-button:hover::after,
+.aqm-download-selected-button:hover::after,
+.aqm-download-all-button:hover::after {
+    opacity: 1;
+}
+
+.aqm-select-all-button:active,
+.aqm-download-selected-button:active,
+.aqm-download-all-button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Active state for Select All button */
+.aqm-select-all-button.active,
+.aqm-download-selected-button.active,
+.aqm-download-all-button.active,
+.aqm-select-all-button.partial {
+    background-color: #0d8ae6;
+    position: relative;
+}
+
+/* Partial selection state */
+.aqm-select-all-button.partial {
+    background-color: #4a90e2;
+}
+
+.aqm-select-all-button.active::after,
+.aqm-download-selected-button.active::after,
+.aqm-download-all-button.active::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.15);
+    opacity: 1;
+    pointer-events: none;
+}
+
+/* Gallery Items */
+.aqm-gallery-items {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -10px;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: visible !important; /* This helps prevent margin collapsing */
+}
+
+/* Gallery item basic styling */
+.aqm-gallery-item {
+    margin-bottom: 20px;
+    padding: 0 10px;
+    box-sizing: border-box;
+    position: relative; /* Allows proper positioning in masonry */
+    overflow: hidden; /* Prevents content from spilling out */
+    transform: translateZ(0); /* Forces GPU acceleration for smoother transitions */
+}
+
+/* Force image width to fill container */
+.aqm-gallery-image img {
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    transition: opacity 0.3s ease; /* Smooth transition when loading */
+    transform: translateZ(0); /* Forces GPU acceleration */
+    backface-visibility: hidden; /* Prevents flickering during transitions */
+}
+
+/* Common gallery layout styles */
+.aqm-gallery-masonry .aqm-gallery-items,
+.aqm-gallery-grid .aqm-gallery-items,
+.aqm-gallery-standard .aqm-gallery-items {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 1px !important; /* Prevents layout shifts */
+    transition: opacity 0.3s ease;
+    position: relative !important;
+}
+
+/* CSS Grid fallback for when JavaScript masonry isn't working */
+.aqm-gallery-masonry:not(.masonry-initialized) .aqm-gallery-items {
+    display: grid !important;
+    /* Column count set via inline style from module settings */
+    grid-gap: 20px;
+}
+
+/* Grid layout with square thumbnails */
+.aqm-gallery-grid .aqm-gallery-items {
+    display: grid !important;
+    /* Column count set via inline style from module settings */
+    grid-gap: 20px;
+}
+
+.aqm-gallery-grid .aqm-gallery-item {
+    position: relative !important;
+    /* Use natural height instead of forcing square */
+    padding-bottom: 0 !important;
+    overflow: hidden !important;
+}
+
+.aqm-gallery-grid .aqm-gallery-item img {
+    /* Use natural sizing */
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100% !important;
+}
+
+/* Standard layout (regular grid) */
+.aqm-gallery-standard .aqm-gallery-items {
+    display: grid !important;
+    /* Column count set via inline style from module settings */
+    grid-gap: 20px;
+}
+
+@media (max-width: 980px) {
+    /* Responsive overrides for tablets, but still respect user settings */
+    .aqm-gallery-masonry:not(.masonry-initialized) .aqm-gallery-items,
+    .aqm-gallery-grid .aqm-gallery-items,
+    .aqm-gallery-standard .aqm-gallery-items {
+        /* Let the inline styles handle columns */
+    }
+    
+    /* Ensure proper width calculations for masonry in tablet view */
+    .masonry-initialized .aqm-gallery-item {
+        width: calc(50% - 20px) !important;
+    }
+}
+
+@media (max-width: 767px) {
+    /* Responsive overrides for mobile, but still respect user settings */
+    .aqm-gallery-masonry:not(.masonry-initialized) .aqm-gallery-items,
+    .aqm-gallery-grid .aqm-gallery-items,
+    .aqm-gallery-standard .aqm-gallery-items {
+        /* Let the inline styles handle columns */
+    }
+    
+    /* Ensure proper width calculations for masonry in mobile view */
+    .masonry-initialized .aqm-gallery-item {
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+}
+
+/* Make sure items in masonry fit properly */
+.aqm-gallery-masonry .aqm-gallery-item {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    break-inside: avoid; /* Prevents items from breaking across columns */
+    page-break-inside: avoid; /* For older browsers */
+    -webkit-column-break-inside: avoid; /* Safari and Chrome */
+}
+
+/* When JavaScript masonry is active */
+.masonry-initialized .aqm-gallery-items {
+    display: block !important;
+    position: relative !important;
+}
+
+.masonry-initialized .aqm-gallery-item {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    position: absolute !important; /* Required for masonry positioning */
+    left: 0 !important; /* Reset any left positioning */
+    top: 0 !important; /* Reset any top positioning */
+    transform: none !important; /* Let masonry handle the positioning */
+    float: left; /* Fallback for older browsers */
+}
+
+/* Fix Divi conflicts with masonry */
+body.et-fb .masonry-initialized .aqm-gallery-item {
+    position: relative !important; /* Allows editing in Divi Builder */
+    transform: none !important;
+}
+
+/* Force items to be 100% width */
+.aqm-gallery-masonry .aqm-gallery-item-inner,
+.aqm-gallery-masonry .aqm-gallery-image {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+}
+
+.aqm-gallery-masonry .aqm-gallery-image img {
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+    object-fit: cover !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Gallery Controls */
+.aqm-gallery-controls {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.aqm-gallery-controls button {
+    margin: 0 !important;
+}
+
+/* Gallery Item */
+.aqm-gallery-item {
+    width: calc(33.3333% - 20px);
+    margin: 0 10px 20px;
+    position: relative;
+    overflow: hidden;
+    background: #f9f9f9;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.aqm-gallery-masonry .aqm-gallery-item {
+    display: inline-block;
+    width: 100%;
+    margin: 0 0 20px;
+    break-inside: avoid;
+}
+
+.aqm-gallery-item-inner {
+    position: relative;
+    overflow: hidden;
+}
+
+.aqm-gallery-image {
+    position: relative;
+    overflow: hidden;
+}
+
+.aqm-gallery-image img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: transform 0.3s ease;
+}
+
+@media only screen and (max-width: 980px) {
+    .aqm-gallery-item {
+        width: calc(50% - 20px);
+    }
+    
+    .aqm-gallery-masonry .aqm-gallery-items {
+        column-count: 2;
+    }
+    
+    .aqm-gallery-masonry.js-masonry-initialized .aqm-gallery-item {
+        width: calc(50% - 20px);
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    .aqm-gallery-item {
+        width: calc(100% - 20px);
+    }
+    
+    .aqm-gallery-masonry .aqm-gallery-items {
+        column-count: 1;
+    }
+    
+    .aqm-gallery-masonry.js-masonry-initialized .aqm-gallery-item {
+        width: calc(100% - 20px);
+    }
+}
+
+.aqm-gallery-item-hidden {
+    display: none;
+}
+
+.aqm-gallery-item-inner {
+    position: relative;
+    overflow: hidden;
+}
+
+.aqm-gallery-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+/* Checkbox for selection */
+.aqm-gallery-checkbox {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 20;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s ease;
+    opacity: 0.7; /* Start semi-transparent */
+}
+
+.aqm-gallery-checkbox input[type="checkbox"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border: 2px solid #fff;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    margin: 0;
+    transition: all 0.3s ease;
+    position: relative;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Selected gallery item */
+.aqm-gallery-item.selected {
+    position: relative;
+}
+
+.aqm-gallery-item.selected::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 3px solid #2ea3f2;
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: 15;
+    box-shadow: 0 0 0 1px rgba(46, 163, 242, 0.5);
+}
+
+.aqm-gallery-item.selected .aqm-gallery-image {
+    opacity: 0.9;
+}
+
+/* Improve checkbox visibility and styling */
+.aqm-gallery-item:hover .aqm-gallery-checkbox,
+.aqm-gallery-item.selected .aqm-gallery-checkbox {
+    opacity: 1;
+}
+
+.aqm-gallery-checkbox input[type="checkbox"]:checked {
+    background-color: #2ea3f2;
+    border-color: #2ea3f2;
+}
+
+.aqm-gallery-checkbox input[type="checkbox"]:checked::after {
+    content: '\2714';
+    font-size: 16px;
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.aqm-gallery-checkbox input[type="checkbox"]:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+    transform: scale(1.1);
+}
+
+/* Style the checkbox */
+.aqm-gallery-checkbox input[type="checkbox"] {
+    cursor: pointer;
+    position: relative;
+    width: 22px;
+    height: 22px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: #fff;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    border-radius: 4px;
+    outline: none;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+    margin: 0;
+}
+
+.aqm-gallery-checkbox input[type="checkbox"]:checked {
+    background-color: #2ea3f2;
+    border-color: #2ea3f2;
+}
+
+.aqm-gallery-checkbox input[type="checkbox"]:checked::before {
+    content: '\2713';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 14px;
+}
+
+.aqm-gallery-checkbox input[type="checkbox"] {
+    margin: 0;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    opacity: 0.8;
+}
+
+.aqm-gallery-checkbox input[type="checkbox"]:checked {
+    opacity: 1;
+}
+
+/* Overlay */
+.aqm-gallery-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s ease;
+    visibility: hidden;
+    z-index: 10;
+}
+
+/* Ensure overlay covers the entire image */
+.aqm-gallery-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.aqm-gallery-item-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.aqm-gallery-image {
+    position: relative;
+    line-height: 0;
+    width: 100%;
+    overflow: hidden;
+}
+
+.aqm-gallery-image img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: transform 0.3s ease;
+}
+
+.aqm-gallery-item:hover .aqm-gallery-overlay {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Make checkboxes visible at all times */
+.aqm-gallery-checkbox input[type="checkbox"] {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Improve visibility when image is hovered */
+.aqm-gallery-item:hover .aqm-gallery-checkbox input[type="checkbox"] {
+    transform: scale(1.1);
+}
+
+.aqm-gallery-overlay {
+    visibility: hidden;
+}
+
+.aqm-gallery-item:hover .aqm-gallery-image img {
+    transform: scale(1.05);
+}
+
+/* Icons */
+.aqm-gallery-icons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px; /* Adjust the gap between icons */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 20;
+    width: auto; /* Only use width needed */
+    max-width: 100%; /* Allow icons to use full width if needed */
+    flex-wrap: nowrap; /* Ensure icons stay on one line */
+    padding: 6px; /* Add padding around the icons */
+}
+
+/* Icon Links */
+.aqm-gallery-lightbox,
+.aqm-gallery-download,
+.aqm-gallery-facebook,
+.aqm-gallery-email {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 28px; /* Default size - will be overridden by inline styles */
+    height: 28px; /* Default size - will be overridden by inline styles */
+    border-radius: 50%;
+    background-color: #fff;
+    color: #333 !important;
+    text-decoration: none !important;
+    transition: all 0.3s ease;
+    margin: 1px; /* Minimal margin */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Lighter shadow */
+    overflow: hidden;
+    transform: translateY(0);
+}
+
+/* Ensure Divi icons display properly */
+.aqm-gallery-icons .et-pb-icon {
+    font-family: 'ETmodules' !important;
+    font-size: 12px !important; /* Even smaller font size */
+    font-weight: normal !important;
+    speak: none;
+    display: inline-block;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Force ETmodules font family for specific icons */
+.aqm-gallery-lightbox .et-pb-icon:before,
+.aqm-gallery-download .et-pb-icon:before,
+.aqm-gallery-facebook .et-pb-icon:before,
+.aqm-gallery-email .et-pb-icon:before {
+    font-family: 'ETmodules' !important;
+    content: attr(data-icon);
+    speak: never;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Additional force for icon display */
+.aqm-gallery-lightbox .et-pb-icon,
+.aqm-gallery-download .et-pb-icon,
+.aqm-gallery-facebook .et-pb-icon,
+.aqm-gallery-email .et-pb-icon {
+    font-size: 16px !important;
+    line-height: 1 !important;
+    font-style: normal !important;
+    font-weight: 400 !important;
+    font-variant: normal !important;
+    text-transform: none !important;
+}
+
+.aqm-gallery-lightbox:hover,
+.aqm-gallery-download:hover,
+.aqm-gallery-facebook:hover,
+.aqm-gallery-email:hover {
+    background-color: #2ea3f2;
+    color: #fff !important;
+    transform: scale(1.05);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+
+.aqm-gallery-lightbox:hover i,
+.aqm-gallery-download:hover i,
+.aqm-gallery-facebook:hover i,
+.aqm-gallery-email:hover i,
+.aqm-gallery-lightbox:hover .et-pb-icon,
+.aqm-gallery-download:hover .et-pb-icon,
+.aqm-gallery-facebook:hover .et-pb-icon,
+.aqm-gallery-email:hover .et-pb-icon {
+    transform: scale(1.1);
+    color: #fff !important;
+}
+
+.aqm-gallery-lightbox i,
+.aqm-gallery-download i,
+.aqm-gallery-facebook i,
+.aqm-gallery-email i,
+.aqm-gallery-lightbox .et-pb-icon,
+.aqm-gallery-download .et-pb-icon,
+.aqm-gallery-facebook .et-pb-icon,
+.aqm-gallery-email .et-pb-icon {
+    line-height: 1;
+    font-size: 14px; /* Default size - will be overridden by inline styles */
+    display: inline-block;
+    transition: transform 0.3s ease;
+    vertical-align: middle;
+}
+
+/* Load More */
+.aqm-load-more-wrap {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.aqm-load-more-button {
+    background-color: #2ea3f2;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.aqm-load-more-button:hover {
+    background-color: #0c71c3;
+}
+
+.aqm-load-more-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.aqm-load-more-counter {
+    font-size: 12px;
+    margin-top: 5px;
+    color: #666;
+}
+
+/* Numbered Pagination */
+.aqm-pagination-wrap {
+    margin: 40px auto 30px;
+    text-align: center;
+    font-family: 'Open Sans', Helvetica, Arial, Lucida, sans-serif;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.aqm-pagination {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    padding: 10px;
+    background-color: transparent;
+    width: auto;
+}
+
+.aqm-pagination a,
+.aqm-pagination span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 12px;
+    margin: 0 4px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    line-height: 1;
+}
+
+.aqm-pagination a {
+    background-color: #f5f5f5;
+    color: #333;
+    border: 1px solid #ddd;
+    position: relative;
+    overflow: hidden;
+}
+
+
+
+.aqm-pagination a:hover {
+    background-color: rgba(46, 163, 242, 0.1);
+    color: #2ea3f2;
+    border-color: #2ea3f2;
+}
+
+.aqm-pagination .aqm-pagination-current {
+    background-color: #2ea3f2;
+    color: #fff;
+    font-weight: 600;
+    border: 1px solid #2ea3f2;
+    position: relative;
+    overflow: hidden;
+}
+
+
+
+.aqm-pagination .disabled {
+    color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.aqm-pagination .aqm-pagination-dots {
+    border: none;
+    background: none;
+    cursor: default;
+    opacity: 0.5;
+    padding: 0 4px;
+}
+
+.aqm-pagination-prev,
+.aqm-pagination-next {
+    font-weight: bold;
+    min-width: 40px !important;
+    height: 40px !important;
+    padding: 0 !important;
+    position: relative;
+    z-index: 2;
+}
+
+.aqm-pagination-prev .et-pb-icon,
+.aqm-pagination-next .et-pb-icon {
+    font-size: 18px;
+    font-family: 'ETmodules';
+    line-height: 1;
+    transition: transform 0.3s ease;
+}
+
+.aqm-pagination-prev:hover .et-pb-icon {
+    transform: translateX(-3px);
+}
+
+.aqm-pagination-next:hover .et-pb-icon {
+    transform: translateX(3px);
+}
+
+/* Enhanced arrow buttons */
+.aqm-pagination-prev,
+.aqm-pagination-next {
+    background-color: #f5f5f5;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.aqm-pagination-prev:hover,
+.aqm-pagination-next:hover {
+    background-color: #2ea3f2;
+    color: #fff;
+    box-shadow: 0 5px 15px rgba(46, 163, 242, 0.2);
+}
+
+.aqm-pagination-info {
+    font-size: 13px;
+    color: #666;
+    margin-top: 8px;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+}
+
+/* Mobile responsive styles */
+@media (max-width: 767px) {
+    .aqm-pagination-wrap {
+        margin: 25px 0 20px;
+    }
+    
+    .aqm-pagination {
+        padding: 3px 5px;
+    }
+    
+    .aqm-pagination a,
+    .aqm-pagination span {
+        min-width: 32px;
+        height: 32px;
+        padding: 0 8px;
+        font-size: 13px;
+        margin: 1px;
+    }
+    
+    .aqm-pagination-prev,
+    .aqm-pagination-next {
+        min-width: 36px !important;
+        height: 36px !important;
+    }
+    
+    .aqm-pagination-prev .et-pb-icon,
+    .aqm-pagination-next .et-pb-icon {
+        font-size: 16px;
+    }
+    
+    /* Hide some page numbers on small screens */
+    .aqm-pagination-num.mobile-hide {
+        display: none;
+    }
+}
+
+/* Loading overlay */
+.aqm-gallery-loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 999999;
+}
+
+.aqm-gallery-loading-spinner {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #2ea3f2;
+    animation: spin 1s linear infinite;
+}
+
+.aqm-gallery-loading-text {
+    color: #fff;
+    margin-top: 20px;
+    font-size: 18px;
+}
+
+/* Load More Specific Loading Indicator */
+.aqm-gallery-loading {
+    position: absolute;
+    left: 50%;
+    bottom: -60px;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 30px;
+    padding: 10px 20px;
+    z-index: 99;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.aqm-gallery-loading::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    animation: spin 1s linear infinite;
+    margin-right: 10px;
+}
+
+.aqm-gallery-loading .aqm-gallery-loading-text {
+    color: #fff;
+    font-size: 14px;
+    margin-top: 0;
+    font-weight: 600;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

@@ -1,0 +1,57 @@
+/* 
+ * ULTRA AGGRESSIVE MOBILE FIX
+ * This file contains extremely specific selectors that will override
+ * ANY other styling to force single column layout on mobile
+ */
+
+/* Target all screen sizes below 768px with maximum specificity */
+@media only screen and (max-width: 767px) {
+    /* Universal ultra-specific selectors for Divi and any theme */
+    html body .et_pb_section .et_pb_row .et_pb_column .et_pb_module .aqm-gallery-container .aqm-gallery-items,
+    html body #page-container .et-db #et-boc .et-l .et_pb_section .aqm-gallery-container .aqm-gallery-items,
+    body #main-content .container .aqm-gallery-container .aqm-gallery-items,
+    #et-main-area .aqm-gallery-container .aqm-gallery-items,
+    div.aqm-gallery-container .aqm-gallery-items,
+    .aqm-gallery-items {
+        display: grid !important;
+        grid-template-columns: repeat(1, 1fr) !important;
+        width: 100% !important;
+    }
+    
+    /* Force every individual gallery item to be full width */
+    html body .et_pb_section .et_pb_row .et_pb_column .et_pb_module .aqm-gallery-container .aqm-gallery-item,
+    html body #page-container .et-db #et-boc .et-l .et_pb_section .aqm-gallery-container .aqm-gallery-item,
+    body #main-content .container .aqm-gallery-container .aqm-gallery-item,
+    #et-main-area .aqm-gallery-container .aqm-gallery-item,
+    div.aqm-gallery-container .aqm-gallery-item,
+    .aqm-gallery-item {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 100% !important;
+        flex-basis: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+    
+    /* Target any style attribute that tries to set grid-template-columns */
+    .aqm-gallery-items[style*="grid-template-columns"] {
+        grid-template-columns: repeat(1, 1fr) !important;
+    }
+
+    /* Last resort - add !important to everything */
+    .aqm-gallery-items > * {
+        grid-column: 1 !important;
+        width: 100% !important;
+    }
+}
+
+/* Handle potential weird viewports */
+@media only screen and (max-device-width: 767px) {
+    .aqm-gallery-items {
+        grid-template-columns: repeat(1, 1fr) !important;
+    }
+    
+    .aqm-gallery-item {
+        width: 100% !important;
+    }
+}

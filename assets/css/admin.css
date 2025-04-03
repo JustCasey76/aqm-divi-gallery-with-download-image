@@ -1,0 +1,26 @@
+/**
+ * AQM Divi Gallery with Download Image
+ * Admin Styles
+ */
+
+/* Module Icon */
+.et-pb-all-modules .et_pb_aqm_divi_gallery::before,
+.et-pb-all-modules-filters .et_pb_aqm_divi_gallery::before {
+    content: '\e009'; /* Image icon */
+}
+
+/* Gallery upload field custom styles */
+.et-pb-option--gallery_images .button-upload {
+    margin-right: 10px !important;
+}
+
+/* Range sliders for image count settings */
+.et-pb-option--initial_count .et-pb-range-input,
+.et-pb-option--load_more_count .et-pb-range-input {
+    width: 60px;
+}
+
+/* Checkbox styling for masonry option */
+.et-pb-option--use_masonry .et_pb_yes_no_button {
+    max-width: 100px;
+}

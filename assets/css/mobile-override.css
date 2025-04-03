@@ -1,0 +1,41 @@
+/* Strong Mobile Overrides for AQM Gallery */
+
+/* Force single column on mobile devices */
+@media only screen and (max-width: 767px) {
+    /* Universal selector for all gallery containers */
+    .aqm-gallery-container .aqm-gallery-items {
+        display: grid !important;
+        grid-template-columns: repeat(1, 1fr) !important;
+        grid-gap: 15px !important;
+    }
+    
+    /* Target each gallery item to ensure they're full width */
+    .aqm-gallery-container .aqm-gallery-item {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+    
+    /* Override any potential inline styles */
+    .aqm-gallery-container .aqm-gallery-items[style*="grid-template-columns"] {
+        grid-template-columns: repeat(1, 1fr) !important;
+    }
+    
+    /* Extra specificity for deeply nested elements */
+    body .et-db #et-boc .et-l .aqm-gallery-container .aqm-gallery-items {
+        grid-template-columns: repeat(1, 1fr) !important;
+    }
+    
+    /* Target inline styles with greater specificity */
+    .aqm-gallery-grid .aqm-gallery-items,
+    .aqm-gallery-masonry .aqm-gallery-items,
+    .aqm-gallery-standard .aqm-gallery-items {
+        grid-template-columns: repeat(1, 1fr) !important;
+    }
+    
+    /* Very high specificity override for stubborn elements */
+    html body .et_pb_section .et_pb_row .et_pb_column .et_pb_module.et_pb_code .aqm-gallery-container .aqm-gallery-items {
+        grid-template-columns: repeat(1, 1fr) !important;
+    }
+}
